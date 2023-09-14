@@ -7,15 +7,17 @@ function sleep(ms) {
 
 const progressParagraph = document.getElementById('progress');
 progressParagraph.style.display = 'block';
+const issueIdsList = []
+const mainName = document.getElementById("mainName").value;
+const userAgent = `${mainName} Gotissues Written by 9003, Email NSWA9002@gmail.com,discord: 9003, NSNation 9003`
+const puppetList = document.getElementById("puppetList").value;
+const containers = document.getElementById("containers").checked;
 
 document.querySelector("form").addEventListener("submit", async (event) => {
     event.preventDefault();
-    const mainName = document.getElementById("mainName").value;
-    const puppetList = document.getElementById("puppetList").value;
-    const containers = document.getElementById("containers").checked;
+    
     const puppets = puppetList.split('\n');
-    const userAgent = `${mainName} Gotissues Written by 9003, Email NSWA9002@gmail.com,discord: 9003, NSNation 9003`
-    const issueIdsList = []
+    
     let containerise_nation = ''
     let containerise_container = ''
     for (let i = 0; i < puppets.length; i++) {
@@ -145,32 +147,6 @@ document.querySelector("form").addEventListener("submit", async (event) => {
     </html>
     `;
 
-    let currentNation = 0
-    function openNextLink() {
-        if (currentNation > issueIdsList.length - 1) {
-            document.getElementById('openNextButton').disabled = true;
-            return
-        }
-        const puppet = issueIdsList[currentNation]
-        if (puppet.issues.length > 0) {
-            document.getElementById('openNextButton').disabled = false;
-            const issueUrl = `https://www.nationstates.net/container=${puppet.nation}/nation=${puppet.nation}/page=show_dilemma/dilemma=${puppet.issues[0]}/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/`;
-            window.open(issueUrl, '_blank');
-            puppet.issues.shift()
-        } else {
-            currentNation++
-            openNextLink()
-        }
-    }
-
-    document.getElementById('openNextButton').addEventListener('click', openNextLink);
-
-    if (issueIdsList.length === 0) {
-        document.getElementById('openNextButton').disabled = true;
-    } else {
-        document.getElementById('openNextButton').disabled = false;
-    }
-    
     document.getElementById('download').addEventListener('click', () => {
         const htmlBlob = new Blob([htmlContent], { type: "text/html" });
         const a = document.createElement("a");
@@ -204,3 +180,23 @@ document.querySelector("form").addEventListener("submit", async (event) => {
     progress.textContent = `Finished processing`
     progressParagraph.prepend(progress)
 });
+
+let currentNation = 0
+function openNextLink() {
+    console.log(issueIdsList)
+    if (currentNation > issueIdsList.length - 1) {
+        return
+    }
+    const puppet = issueIdsList[currentNation]
+    if (puppet.issues.length > 0) {
+        document.getElementById('openNextButton').disabled = false;
+        const issueUrl = `https://www.nationstates.net/container=${puppet.nation}/nation=${puppet.nation}/page=show_dilemma/dilemma=${puppet.issues[0]}/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/`;
+        window.open(issueUrl, '_blank');
+        puppet.issues.shift()
+    } else {
+        currentNation++
+        openNextLink()
+    }
+}
+
+document.getElementById('openNextButton').addEventListener('click', openNextLink);
