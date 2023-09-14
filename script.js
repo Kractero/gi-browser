@@ -144,33 +144,61 @@ document.querySelector("form").addEventListener("submit", async (event) => {
     </body>
     </html>
     `;
-    const htmlBlob = new Blob([htmlContent], { type: "text/html" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(htmlBlob);
-    a.download = "9003samazinglistofcards.html";
-    a.style.display = "none";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
 
-    if (containers) {
-      const blob = new Blob([containerise_container], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = "Containerise (container).txt";
-      link.click();
-
-      const blob2 = new Blob([containerise_nation], { type: 'text/plain' });
-      const url2 = window.URL.createObjectURL(blob2);
-      const link2 = document.createElement('a');
-      link2.href = url2;
-      link2.download = "Containerise (nation).txt";
-      link2.click();
-
-      window.URL.revokeObjectURL(url);
-      window.URL.revokeObjectURL(url2);
+    let currentNation = 0
+    function openNextLink() {
+        if (currentNation > issueIdsList.length - 1) {
+            document.getElementById('openNextButton').disabled = true;
+            return
+        }
+        const puppet = issueIdsList[currentNation]
+        if (puppet.issues.length > 0) {
+            document.getElementById('openNextButton').disabled = false;
+            const issueUrl = `https://www.nationstates.net/container=${puppet.nation}/nation=${puppet.nation}/page=show_dilemma/dilemma=${puppet.issues[0]}/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/`;
+            window.open(issueUrl, '_blank');
+            puppet.issues.shift()
+        } else {
+            currentNation++
+            openNextLink()
+        }
     }
+
+    document.getElementById('openNextButton').addEventListener('click', openNextLink);
+
+    if (issueIdsList.length === 0) {
+        document.getElementById('openNextButton').disabled = true;
+    } else {
+        document.getElementById('openNextButton').disabled = false;
+    }
+    
+    document.getElementById('download').addEventListener('click', () => {
+        const htmlBlob = new Blob([htmlContent], { type: "text/html" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(htmlBlob);
+        a.download = "9003samazinglistofcards.html";
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        if (containers) {
+          const blob = new Blob([containerise_container], { type: 'text/plain' });
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = "Containerise (container).txt";
+          link.click();
+    
+          const blob2 = new Blob([containerise_nation], { type: 'text/plain' });
+          const url2 = window.URL.createObjectURL(blob2);
+          const link2 = document.createElement('a');
+          link2.href = url2;
+          link2.download = "Containerise (nation).txt";
+          link2.click();
+    
+          window.URL.revokeObjectURL(url);
+          window.URL.revokeObjectURL(url2);
+        }
+    })
 
     const progress = document.createElement("p")
     progress.textContent = `Finished processing`
