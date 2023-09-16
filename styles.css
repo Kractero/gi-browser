@@ -23,3 +23,11 @@ textarea {
     width: 100%;
     height: 300px;
 }
+
+.puppetheading {
+    margin-bottom: 0;
+}
+
+#openNextButton {
+    padding: 1rem;
+}

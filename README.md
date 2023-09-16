@@ -3,9 +3,11 @@
 
 Browser version of [9003's gotIssues](https://github.com/jmikk/gotIssues), the next step in my endless quest to make gotIssues easier to run for non-technical users. It additionally generates rules for both container and nation for the [Containerise](https://addons.mozilla.org/en-US/firefox/addon/containerise/) firefox addon.
 
-Below from and still needed from [9003's repo](https://github.com/jmikk/gotIssues)
+You should be able to answer issues concurrently with the script without worrying about getting ahead, with more confidence on answering issues concurrently and less confidence on getting ahead.
 
-You will need the following Tampermonkey scripts now they are all located here (if you have old versions of these scripts please disable them) NsIssueCompactorRand.js autoclose=1.user.js
+Below from and still needed from [9003's repo](https://github.com/jmikk/gotIssues): NsIssueCompactorRand.js, autoclose=1.user.js
+
+Please raise issues and suggest features through github or discord. Feel free to make a pull request.
 
 # DISCLAIMER
 

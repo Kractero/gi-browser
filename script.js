@@ -9,14 +9,26 @@ function sleep(ms) {
 const progressParagraph = document.getElementById('progress');
 progressParagraph.style.display = 'block';
 const issueIdsList = []
-const mainName = document.getElementById("mainName").value;
-const password = document.getElementById("password").value;
-const userAgent = `${mainName} Gotissues Written by 9003, Email NSWA9002@gmail.com,discord: 9003, NSNation 9003`
-const puppetList = document.getElementById("puppetList").value;
-const containers = document.getElementById("containers").checked;
+
+if (localStorage.getItem('gotIssuesUserAgent')) {
+  document.getElementById("mainName").value = localStorage.getItem('gotIssuesUserAgent')
+}
+if (localStorage.getItem('gotIssuesNations')) {
+  document.getElementById("puppetList").value = JSON.parse(localStorage.getItem('gotIssuesNations'))
+}
+if (localStorage.getItem('gotIssuesCred')) {
+  document.getElementById("password").value = localStorage.getItem('gotIssuesCred')
+}
+
 
 document.querySelector("form").addEventListener("submit", async (event) => {
     event.preventDefault();
+    document.getElementById('openNextButton').disabled = false;
+    const mainName = document.getElementById("mainName").value;
+    const userAgent = `${mainName} Gotissues Written by 9003, Email NSWA9002@gmail.com,discord: 9003, NSNation 9003`
+    const password = document.getElementById("password").value;
+    const puppetList = document.getElementById("puppetList").value;
+    const containers = document.getElementById("containers").checked;
     
     const puppets = puppetList.split('\n');
     
@@ -208,3 +220,10 @@ document.getElementById('openNextButton').addEventListener('click', openNextLink
 window.addEventListener('beforeunload', (e) => {
   abortController.abort();
 });
+
+document.getElementById('save').addEventListener('click', () => {
+  localStorage.setItem('gotIssuesNations', JSON.stringify(document.getElementById("puppetList").value))
+  localStorage.setItem('gotIssuesCred', document.getElementById("password").value)
+  localStorage.setItem('gotIssuesUserAgent', document.getElementById("mainName").value)
+})
+document.getElementById('clear').addEventListener('click', () => localStorage.clear())

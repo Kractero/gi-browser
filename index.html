@@ -12,17 +12,22 @@
         <input id="mainName" name="mainName" required>
         <h2>Password</h2>
         <input id="password" name="password" required>
-        <h2>Puppet List</h2>
+        <h2 class="puppetheading">Puppet List</h2>
         <p>(only nation names)</p>
         <textarea id="puppetList" name="puppetList" required></textarea>
         <input type="checkbox" id="containers" name="containers" value="container">
         <label for="containers"> Generate container rules</label><br>
         <button type="submit">Run</button>
     </form>
-    
-    <button id="openNextButton">Open Next Link</button>
 
-    <button id="download">Download Generated HTMl and Container Rules</button>
+    <div class="storage">
+        <button id="save" name="save">Save to Storage</button>
+        <button id="clear" name="clear">Clear Storage</button>
+    </div>
+    
+    <button id="openNextButton" disabled>Open Next Link</button>
+
+    <button id="download">Download Generated HTML and Container Rules</button>
     
     <h2>Thanks to 9003 for the <a href="https://github.com/jmikk/gotIssues">original gotissues</a></h2>
     <div id="progress">
