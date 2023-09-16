@@ -10,6 +10,7 @@ const progressParagraph = document.getElementById('progress');
 progressParagraph.style.display = 'block';
 const issueIdsList = []
 const mainName = document.getElementById("mainName").value;
+const password = document.getElementById("password").value;
 const userAgent = `${mainName} Gotissues Written by 9003, Email NSWA9002@gmail.com,discord: 9003, NSNation 9003`
 const puppetList = document.getElementById("puppetList").value;
 const containers = document.getElementById("containers").checked;
@@ -25,25 +26,25 @@ document.querySelector("form").addEventListener("submit", async (event) => {
         if (abortController.signal.aborted) {
             break;
         }
-        const nation = puppets[i].split(',')
+        const nation = puppets[i]
         const progress = document.createElement("p")
         try {
             await sleep(700);
-            progress.textContent = `Processing ${nation[0]}, ${i+1}/${puppets.length}`
+            progress.textContent = `Processing ${nation} ${i+1}/${puppets.length}`
             if (containers) {
-              containerise_nation += `@^.*\\.nationstates\\.net/(.*/)?nation=${nation[0].toLowerCase().replaceAll(' ', '_')}(/.*)?$ , ${nation[0]}\n`
-              containerise_container += `@^.*\\.nationstates\\.net/(.*/)?container=${nation[0].toLowerCase().replaceAll(' ', '_')}(/.*)?$ , ${nation[0]}\n`
+              containerise_nation += `@^.*\\.nationstates\\.net/(.*/)?nation=${nation.toLowerCase().replaceAll(' ', '_')}(/.*)?$ , ${nation}\n`
+              containerise_container += `@^.*\\.nationstates\\.net/(.*/)?container=${nation.toLowerCase().replaceAll(' ', '_')}(/.*)?$ , ${nation}\n`
             }
             progressParagraph.prepend(progress)
             const response = await fetch(
                 "https://www.nationstates.net/cgi-bin/api.cgi/?nation=" +
-                nation[0] +
+                nation +
                 "&q=issues+packs",
                 {
                     method: "GET",
                     headers: {
                         "User-Agent": userAgent,
-                        "X-Password": nation[1].replace(" ", "_"),
+                        "X-Password": password.replace(" ", "_"),
                     },
                 }
             );
@@ -52,7 +53,7 @@ document.querySelector("form").addEventListener("submit", async (event) => {
             const issueIds = xmlDocument.querySelectorAll('ISSUE');
             const packs = xmlDocument.querySelector('PACKS');
             const nationObj = {
-                nation: nation[0].toLowerCase().replaceAll(' ', '_'),
+                nation: nation.toLowerCase().replaceAll(' ', '_'),
                 issues: [],
                 packs: packs ? parseInt(packs.textContent) : 0
             }
@@ -61,7 +62,7 @@ document.querySelector("form").addEventListener("submit", async (event) => {
             });
             issueIdsList.push(nationObj)
         } catch (err) {
-            progress.textContent = `Error processing ${nation[0]} with ${err}` 
+            progress.textContent = `Error processing ${nation} with ${err}` 
         }
     }
     const totalcount = issueIdsList.reduce((count, puppet) => count + puppet.issues.length, 0);
