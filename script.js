@@ -21,7 +21,6 @@ document.querySelector("form").addEventListener("submit", async (event) => {
     let containerise_nation = ''
     let containerise_container = ''
     for (let i = 0; i < puppets.length; i++) {
-        if (!puppets[i].includes(',')) throw new Error("FORMAT IT RIGHT PLEASE!")
         const nation = puppets[i].split(',')
         const progress = document.createElement("p")
         try {
