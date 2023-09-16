@@ -27,13 +27,14 @@ document.querySelector("form").addEventListener("submit", async (event) => {
             break;
         }
         const nation = puppets[i]
+        const nation_formatted = nation.toLowerCase().replaceAll(' ', '_')
         const progress = document.createElement("p")
         try {
             await sleep(700);
             progress.textContent = `Processing ${nation} ${i+1}/${puppets.length}`
             if (containers) {
-              containerise_nation += `@^.*\\.nationstates\\.net/(.*/)?nation=${nation.toLowerCase().replaceAll(' ', '_')}(/.*)?$ , ${nation}\n`
-              containerise_container += `@^.*\\.nationstates\\.net/(.*/)?container=${nation.toLowerCase().replaceAll(' ', '_')}(/.*)?$ , ${nation}\n`
+              containerise_nation += `@^.*\\.nationstates\\.net/(.*/)?nation=${nation_formatted}(/.*)?$ , ${nation}\n`
+              containerise_container += `@^.*\\.nationstates\\.net/(.*/)?container=${nation_formatted}(/.*)?$ , ${nation}\n`
             }
             progressParagraph.prepend(progress)
             const response = await fetch(
@@ -53,7 +54,7 @@ document.querySelector("form").addEventListener("submit", async (event) => {
             const issueIds = xmlDocument.querySelectorAll('ISSUE');
             const packs = xmlDocument.querySelector('PACKS');
             const nationObj = {
-                nation: nation.toLowerCase().replaceAll(' ', '_'),
+                nation: nation_formatted,
                 issues: [],
                 packs: packs ? parseInt(packs.textContent) : 0
             }
@@ -187,7 +188,6 @@ document.querySelector("form").addEventListener("submit", async (event) => {
 
 let currentNation = 0
 function openNextLink() {
-    console.log(issueIdsList)
     if (currentNation > issueIdsList.length - 1) {
         return
     }
