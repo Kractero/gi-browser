@@ -1,5 +1,6 @@
 let version = "7.1"
 const parser = new DOMParser();
+const abortController = new AbortController();
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -21,6 +22,9 @@ document.querySelector("form").addEventListener("submit", async (event) => {
     let containerise_nation = ''
     let containerise_container = ''
     for (let i = 0; i < puppets.length; i++) {
+        if (abortController.signal.aborted) {
+            break;
+        }
         const nation = puppets[i].split(',')
         const progress = document.createElement("p")
         try {
@@ -199,3 +203,7 @@ function openNextLink() {
 }
 
 document.getElementById('openNextButton').addEventListener('click', openNextLink);
+
+window.addEventListener('beforeunload', (e) => {
+  abortController.abort();
+});
