@@ -10,6 +10,11 @@ const progressParagraph = document.getElementById('progress');
 progressParagraph.style.display = 'block';
 const issueIdsList = []
 
+let mainName = document.getElementById("mainName").value;
+let password = document.getElementById("password").value;
+let puppetList = document.getElementById("puppetList").value;
+let containers = document.getElementById("containers").checked;
+let userAgent = `${mainName} Gotissues Written by 9003, Email NSWA9002@gmail.com,discord: 9003, NSNation 9003`
 if (localStorage.getItem('gotIssuesUserAgent')) {
   document.getElementById("mainName").value = localStorage.getItem('gotIssuesUserAgent')
 }
@@ -24,11 +29,11 @@ if (localStorage.getItem('gotIssuesCred')) {
 document.querySelector("form").addEventListener("submit", async (event) => {
     event.preventDefault();
     document.getElementById('openNextButton').disabled = false;
-    const mainName = document.getElementById("mainName").value;
-    const userAgent = `${mainName} Gotissues Written by 9003, Email NSWA9002@gmail.com,discord: 9003, NSNation 9003`
-    const password = document.getElementById("password").value;
-    const puppetList = document.getElementById("puppetList").value;
-    const containers = document.getElementById("containers").checked;
+    mainName = document.getElementById("mainName").value;
+    userAgent = `${mainName} Gotissues Written by 9003, Email NSWA9002@gmail.com,discord: 9003, NSNation 9003`
+    password = document.getElementById("password").value;
+    puppetList = document.getElementById("puppetList").value;
+    containers = document.getElementById("containers").checked;
     
     const puppets = puppetList.split('\n');
     
