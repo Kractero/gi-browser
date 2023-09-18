@@ -1,45 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>gotIssues Browser</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <form>
-        <h2>Main Name</h2>
-        <input id="mainName" name="mainName" required>
-        <p class="caption">
-            If all your passwords are the same, put it in the password input, otherwise
-            format it like nationname,password in the puppet list text input
-        </p>
-        <h2>Password</h2>
-        <input id="password" name="password">
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/alpinejs" defer></script>
+  </head>
+  <body x-data="{mode: 'gotIssues'}">
+    <nav>
+      <button
+        x-bind:class="mode === 'gotIssues' ? '' : 'inactive'"
+        x-on:click="mode = 'gotIssues'"
+      >
+        gotIssues
+      </button>
+      <button
+        x-bind:class="mode === 'JunkDaJunk' ? '' : 'inactive'"
+        x-on:click="mode = 'JunkDaJunk'"
+        disabled
+      >
+        junk da junk
+      </button>
+      <button
+        x-bind:class="mode === 'Container Rules' ? '' : 'inactive'"
+        x-on:click="mode = 'Container Rules'"
+      >
+        Container Rules
+      </button>
+      <button
+        x-bind:class="mode === 'Login Sheet' ? '' : 'inactive'"
+        x-on:click="mode = 'Login Sheet'"
+      >
+        Login Sheet
+      </button>
+    </nav>
+    <h1 x-text="mode"></h1>
+    <form
+      x-on:submit.prevent="mode === 'gotIssues' 
+            ? gotIssues($store.config.mainNation, $store.config.puppets, $store.config.password, $store.config.multiplePasswords) 
+            : nsIterator($store.config.mainNation, $store.config.puppets, mode)
+        "
+    >
+      <h2>Main Name</h2>
+      <input
+        id="mainName"
+        name="mainName"
+        required
+        x-model="$store.config.mainNation"
+      />
+      <div>
+        <button
+          type="button"
+          x-bind:class="$store.config.multiplePasswords === true ? 'inactive' : ''"
+          x-on:click="$store.config.multiplePasswords = false"
+          x-show="mode === 'gotIssues'"
+        >
+          Same Passwords
+        </button>
+        <button
+          type="button"
+          x-bind:class="$store.config.multiplePasswords === true ? '' : 'inactive'"
+          x-on:click="$store.config.multiplePasswords = true"
+          x-show="mode === 'gotIssues'"
+        >
+          Different Passwords
+        </button>
+        <h2
+          x-show="$store.config.multiplePasswords === false && mode === 'gotIssues'"
+        >
+          Shared Password
+        </h2>
+        <input
+          x-show="!$store.config.multiplePasswords && mode === 'gotIssues'"
+          id="password"
+          name="password"
+          x-model="$store.config.password"
+        />
         <h2 class="puppetheading">Puppet List</h2>
-        <textarea id="puppetList" name="puppetList" required></textarea>
-        <input type="checkbox" id="issues" name="issues" value="issue" checked>
-        <label for="issues"> Run got issues</label><br>
-        <input type="checkbox" id="containers" name="containers" value="container">
-        <label for="containers"> Generate container rules</label><br>
-        <input type="checkbox" id="logins" name="logins" value="login">
-        <label for="logins"> Generate login sheet</label><br>
-        <button type="submit">Run</button>
+        <p
+          class="caption"
+          x-text="$store.config.multiplePasswords && mode === 'gotIssues' ? 'Please format nation,password on separate lines' : 'Please format nation names on separate lines'"
+        ></p>
+        <p class="caption" x-show="mode !== 'gotIssues'">
+          Passwords are not required for this generation and are automatically
+          stripped from the inputs.
+        </p>
+        <textarea
+          id="puppetList"
+          name="puppetList"
+          x-model="$store.config.puppets"
+          required
+        ></textarea>
+      </div>
+      <button type="submit">Run</button>
     </form>
 
     <div class="storage">
-        <button id="save" name="save">Save to Storage</button>
-        <button id="clear" name="clear">Clear Storage</button>
+      <button id="save" name="save" x-on:click="$store.config.writeToStorage()">
+        Save to Storage
+      </button>
+      <button id="clear" name="clear" x-on:click="localStorage.clear()">
+        Clear Storage
+      </button>
     </div>
-    
-    <button id="openNextButton" disabled>Open Next Link</button>
 
-    <button id="download">Download Generated HTML and Container Rules</button>
-    
-    <h2>Thanks to 9003 for the <a href="https://github.com/jmikk/gotIssues">original gotissues</a></h2>
-    <div id="progress">
+    <button
+      id="openNextButton"
+      x-on:click="openNextLink"
+      x-show="mode === 'gotIssues'"
+    >
+      Open Next Link
+    </button>
 
-    </div>
+    <div id="progress"></div>
+
+    <h2 x-show="mode === 'gotIssues'">
+      Thanks to 9003 for the
+      <a href="https://github.com/jmikk/gotIssues">original gotissues</a>
+    </h2>
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
