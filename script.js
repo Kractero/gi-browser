@@ -61,7 +61,7 @@ document.querySelector("form").addEventListener("submit", async (event) => {
   let loginContent = ''
   if (login) {
     for (let i = 0; i < puppets.length; i++) {
-      const nation = puppets[i]
+      const nation = puppets[i].substring(0, puppets[i].indexOf(','))
       const nation_formatted = nation.toLowerCase().replaceAll(' ', '_')
       loginContent += `<tr><td><p>${i + 1} of ${puppets.length}</p></td><td><p><a target="_blank" href="https://www.nationstates.net/nation=${nation_formatted}/page=upload_flag/test=1/User_agent=${userAgent}">Link to Nation</a></p></td></tr>`
     }
