@@ -6,31 +6,35 @@
     <title>gotIssues Browser</title>
     <link rel="stylesheet" href="styles.css" />
     <script src="https://unpkg.com/alpinejs" defer></script>
+    <style>
+        [x-cloak] {
+            display: none;
+        }
+    </style>
   </head>
-  <body x-data="{mode: 'gotIssues'}">
+  <body x-data="{mode: localStorage.getItem('lastSelectedMode') || 'gotIssues'}">
     <nav>
       <button
         x-bind:class="mode === 'gotIssues' ? '' : 'inactive'"
-        x-on:click="mode = 'gotIssues'"
+        x-on:click="mode = 'gotIssues'; localStorage.setItem('lastSelectedMode', 'gotIssues')"
       >
         gotIssues
       </button>
       <button
         x-bind:class="mode === 'JunkDaJunk' ? '' : 'inactive'"
-        x-on:click="mode = 'JunkDaJunk'"
-        disabled
+        x-on:click="mode = 'JunkDaJunk'; localStorage.setItem('lastSelectedMode', 'JunkDaJunk')"
       >
         junk da junk
       </button>
       <button
         x-bind:class="mode === 'Container Rules' ? '' : 'inactive'"
-        x-on:click="mode = 'Container Rules'"
+        x-on:click="mode = 'Container Rules'; localStorage.setItem('lastSelectedMode', 'Container Rules')"
       >
         Container Rules
       </button>
       <button
         x-bind:class="mode === 'Login Sheet' ? '' : 'inactive'"
-        x-on:click="mode = 'Login Sheet'"
+        x-on:click="mode = 'Login Sheet'; localStorage.setItem('lastSelectedMode', 'Login Sheet')"
       >
         Login Sheet
       </button>
@@ -39,6 +43,7 @@
     <form
       x-on:submit.prevent="mode === 'gotIssues' 
             ? gotIssues($store.config.mainNation, $store.config.puppets, $store.config.password, $store.config.multiplePasswords) 
+            : mode === 'JunkDaJunk' ? junkDaJunk($store.config.mainNation, $store.config.puppets)
             : nsIterator($store.config.mainNation, $store.config.puppets, mode)
         "
     >
@@ -108,7 +113,7 @@
     <button
       id="openNextButton"
       x-on:click="openNextLink"
-      x-show="mode === 'gotIssues'"
+      x-show="mode === 'gotIssues' || mode === 'JunkDaJunk'"
     >
       Open Next Link
     </button>

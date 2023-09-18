@@ -27,6 +27,7 @@ document.addEventListener("alpine:init", () => {
 });
 
 const issueIdsList = [];
+const tempJunkAlongside = [];
 let generatedContent = "";
 let containerise_nation = "";
 let containerise_container = "";
@@ -41,12 +42,12 @@ progressParagraph.style.display = "block";
 function handleDownload(mode) {
   let blob;
   if (containerise_container && containerise_nation) {
-    blob = new Blob([containerise_container], { type: "text/txt"});
+    blob = new Blob([containerise_container], { type: "text/txt" });
     urlObject(blob, "Containerise (Container)");
-    blob = new Blob([containerise_nation], { type: "text/txt"});
+    blob = new Blob([containerise_nation], { type: "text/txt" });
     urlObject(blob, "Containerise (Nation)");
   } else {
-    blob = new Blob([generatedContent], { type: "text/html"});
+    blob = new Blob([generatedContent], { type: "text/html" });
     urlObject(blob, mode);
   }
 }
@@ -55,31 +56,50 @@ function urlObject(blob, mode) {
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `${mode}.${['gotIssues', 'Login Sheet'].includes(mode) ? "html" : "txt"}`;
+  link.download = `${mode}.${
+    ["gotIssues", "Login Sheet", "junkDaJunk"].includes(mode) ? "html" : "txt"
+  }`;
   link.click();
   window.URL.revokeObjectURL(url);
 }
 
-let currentNation = 0;
-function openNextLink() {
-  if (currentNation > issueIdsList.length - 1) {
-    return;
-  }
-  const puppet = issueIdsList[currentNation];
-  if (puppet.issues.length > 0) {
-    document.getElementById("openNextButton").disabled = false;
-    const issueUrl = `https://www.nationstates.net/container=${puppet.nation}/nation=${puppet.nation}/page=show_dilemma/dilemma=${puppet.issues[0]}/template-overall=none//User_agent=${Alpine.store("config").getUserAgent()}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/`;
-    window.open(issueUrl, "_blank");
-    puppet.issues.shift();
+let counter = 0;
+function openNextLink(mode) {
+  if (mode === "gotIssues") {
+    if (counter > issueIdsList.length - 1) {
+      return;
+    }
+    const puppet = issueIdsList[counter];
+    if (puppet.issues.length > 0) {
+      document.getElementById("openNextButton").disabled = false;
+      const issueUrl = `https://www.nationstates.net/container=${
+        puppet.nation
+      }/nation=${puppet.nation}/page=show_dilemma/dilemma=${
+        puppet.issues[0]
+      }/template-overall=none//User_agent=${Alpine.store(
+        "config"
+      ).getUserAgent()}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/`;
+      window.open(issueUrl, "_blank");
+      puppet.issues.shift();
+    } else {
+      counter++;
+      openNextLink();
+    }
   } else {
-    currentNation++;
+    if (counter > tempJunkAlongside.length - 1) {
+      return;
+    }
+    document.getElementById("openNextButton").disabled = false;
+    window.open(tempJunkAlongside[counter], "_blank");
+    tempJunkAlongside.shift();
+    counter++;
     openNextLink();
   }
 }
 
 async function nsIterator(main, puppets, mode) {
-  puppets = puppets.split('\n')
-  let buildString = ''
+  puppets = puppets.split("\n");
+  let buildString = "";
   for (let i = 0; i < puppets.length; i++) {
     let nation = puppets[i];
     if (nation.includes(",")) {
@@ -96,11 +116,11 @@ async function nsIterator(main, puppets, mode) {
       }</p></td><td><p><a target="_blank" href="https://www.nationstates.net/nation=${nation_formatted}/page=upload_flag/test=1/User_agent=${main}">Link to Nation</a></p></td></tr>`;
     }
   }
-  if (mode === "Login Sheet") generatedContent = htmlContent(buildString)
+  if (mode === "Login Sheet") generatedContent = htmlContent(buildString);
   const progress = document.createElement("p");
   progress.textContent = `Finished processing`;
   progressParagraph.prepend(progress);
-  handleDownload(mode)
+  handleDownload(mode);
 }
 
 async function gotIssues(main, puppets, password, format) {
@@ -193,7 +213,7 @@ async function gotIssues(main, puppets, password, format) {
   const progress = document.createElement("p");
   progress.textContent = `Finished processing`;
   progressParagraph.prepend(progress);
-  handleDownload("gotIssues")
+  handleDownload("gotIssues");
 }
 
 const htmlContent = (content) => {
@@ -263,6 +283,129 @@ const htmlContent = (content) => {
   </html>
   `;
 };
+
+async function junkDaJunk(main, puppets) {
+  let junkHtml = "";
+  puppets = puppets.split("\n");
+  const parser = new DOMParser();
+  for (let i = 0; i < puppets.length; i++) {
+    let nation = puppets[i].toLowerCase().replaceAll(" ", "_");
+    if (nation.includes(",")) {
+      nation = nation.substring(0, nation.indexOf(","));
+    }
+    if (abortController.signal.aborted) {
+      break;
+    }
+    const progress = document.createElement("p");
+    try {
+      await sleep(700);
+      progress.textContent = `Processing ${nation} ${i + 1}/${puppets.length}`;
+      progress.style.color = "blue";
+      progressParagraph.prepend(progress);
+      const response = await fetch(
+        `https://www.nationstates.net/cgi-bin/api.cgi/?nationname=${nation}&q=cards+deck`,
+        {
+          headers: {
+            "User-Agent": main,
+          },
+        }
+      );
+      const xml = await response.text();
+      const xmlDocument = parser.parseFromString(xml, "text/xml");
+      const cards = xmlDocument.querySelectorAll("CARD");
+      for (let i = 0; i < cards.length; i++) {
+        const id = cards[i].querySelector("CARDID").textContent;
+        const season = cards[i].querySelector("SEASON").textContent;
+        await sleep(700);
+        const response = await fetch(
+          `https://www.nationstates.net/cgi-bin/api.cgi/?cardid=${id}&season=${season}&q=card+markets+info`,
+          {
+            headers: {
+              "User-Agent": main,
+            },
+          }
+        );
+        const xml = await response.text();
+        const xmlDocument = parser.parseFromString(xml, "text/xml");
+        const category = xmlDocument.querySelector("CATEGORY").textContent;
+        const marketValue =
+          xmlDocument.querySelector("MARKET_VALUE").textContent;
+        const region = xmlDocument.querySelector("REGION");
+
+        let highestBid = 0;
+        const markets = xmlDocument.querySelectorAll("MARKET");
+
+        markets.forEach((market) => {
+          if (market.querySelector("TYPE").textContent === "bid") {
+            const price = parseFloat(market.querySelector("PRICE").textContent);
+            if (price > highestBid) {
+              highestBid = price;
+            }
+          }
+        });
+
+        let junk = false;
+        const categoryThresholds = {
+          common: 0.5,
+          uncommon: 1,
+          rare: 1,
+          "ultra-rare": 1,
+          epic: 1,
+        };
+
+        if (
+          categoryThresholds.hasOwnProperty(category) &&
+          highestBid < categoryThresholds[category]
+        ) {
+          junk = true;
+        }
+        if (parseFloat(marketValue) >= 10) junk = false;
+
+        // if (region) {
+        //   region = region.textContent
+        //   if (region === "Testregionia") {
+        //     junk = false
+        //   }
+        // }
+
+        if (junk) {
+          const progress = document.createElement("p");
+          progress.textContent = `${i + 1}/${
+            cards.length
+          } -> Junking S${season} ${id} with mv ${marketValue} and highest bid ${highestBid}, rarity ${category}`;
+          progress.style.color = "red";
+          progressParagraph.prepend(progress);
+          tempJunkAlongside.push(
+            `https://www.nationstates.net/container=${nation}/nation=${nation}/page=ajax3/a=junkcard/card=${id}/season=${season}/User_agent=${main}Script=JunkDaJunk/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1`
+          );
+          junkHtml += `<tr><td><p>${i + 1} of ${
+            cards.length
+          }</p></td><td><p><a target="_blank" href="https://www.nationstates.net/container=${nation}/nation=${nation}/page=ajax3/a=junkcard/card=${id}/season=${season}/User_agent=${main}Script=JunkDaJunk/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1\n">Link to Card</a></p></td></tr>`;
+        } else {
+          const progress = document.createElement("p");
+          progress.textContent = `${i + 1}/${
+            cards.length
+          } -> Gifting ${id} with mv ${marketValue} and highest bid ${highestBid}, rarity ${category}`;
+          progress.style.color = "green";
+          progressParagraph.prepend(progress);
+          tempJunkAlongside.push(
+            `https://www.nationstates.net/page=deck/container=${nation}/nation=${nation}/card=${id}/season=${season}/gift=1/User_agent=${main}Script=JunkDaJunk/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1`
+          );
+          junkHtml += `<tr><td><p>${i + 1} of ${
+            cards.length
+          }</p></td><td><p><a target="_blank" href="https://www.nationstates.net/page=deck/container=${nation}/nation=${nation}/card=${id}/season=${season}/gift=1/User_agent=${main}Script=JunkDaJunk/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1\n">Link to Card</a></p></td></tr>`;
+        }
+      }
+    } catch (err) {
+      progress.textContent = `Error processing ${nation} with ${err}`;
+    }
+  }
+  generatedContent = htmlContent(junkHtml);
+  const progress = document.createElement("p");
+  progress.textContent = `Finished processing`;
+  progressParagraph.prepend(progress);
+  handleDownload("junkDaJunk");
+}
 
 window.addEventListener("beforeunload", () => {
   abortController.abort();
