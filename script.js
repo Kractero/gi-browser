@@ -34,16 +34,24 @@ document.querySelector("form").addEventListener("submit", async (event) => {
     password = document.getElementById("password").value;
     puppetList = document.getElementById("puppetList").value;
     containers = document.getElementById("containers").checked;
+    let format = true
+    if (!password) {
+      format = false
+    }
     
     const puppets = puppetList.split('\n');
     
     let containerise_nation = ''
     let containerise_container = ''
     for (let i = 0; i < puppets.length; i++) {
+        let nation = puppets[i]
+        if (!format) {
+          nation = puppets[i].split(',')[0]
+          password = puppets[i].split(',')[1]
+        }
         if (abortController.signal.aborted) {
             break;
         }
-        const nation = puppets[i]
         const nation_formatted = nation.toLowerCase().replaceAll(' ', '_')
         const progress = document.createElement("p")
         try {

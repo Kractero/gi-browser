@@ -31,3 +31,7 @@ textarea {
 #openNextButton {
     padding: 1rem;
 }
+
+.caption {
+    font-size: 0.75rem;
+}
