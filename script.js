@@ -1,4 +1,5 @@
 let version = "7.1";
+const parser = new DOMParser();
 const abortController = new AbortController();
 
 document.addEventListener("alpine:init", () => {
@@ -26,8 +27,7 @@ document.addEventListener("alpine:init", () => {
   });
 });
 
-const issueIdsList = [];
-const tempJunkAlongside = [];
+let openNewLinkArr = [];
 let generatedContent = "";
 let containerise_nation = "";
 let containerise_container = "";
@@ -64,37 +64,13 @@ function urlObject(blob, mode) {
 }
 
 let counter = 0;
-function openNextLink(mode) {
-  if (mode === "gotIssues") {
-    if (counter > issueIdsList.length - 1) {
-      return;
-    }
-    const puppet = issueIdsList[counter];
-    if (puppet.issues.length > 0) {
-      document.getElementById("openNextButton").disabled = false;
-      const issueUrl = `https://www.nationstates.net/container=${
-        puppet.nation
-      }/nation=${puppet.nation}/page=show_dilemma/dilemma=${
-        puppet.issues[0]
-      }/template-overall=none//User_agent=${Alpine.store(
-        "config"
-      ).getUserAgent()}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/`;
-      window.open(issueUrl, "_blank");
-      puppet.issues.shift();
-    } else {
-      counter++;
-      openNextLink();
-    }
-  } else {
-    if (counter > tempJunkAlongside.length - 1) {
-      return;
-    }
-    document.getElementById("openNextButton").disabled = false;
-    window.open(tempJunkAlongside[counter], "_blank");
-    tempJunkAlongside.shift();
-    counter++;
-    openNextLink();
+function openNextLink() {
+  if (counter > openNewLinkArr.length - 1) {
+    return;
   }
+  document.getElementById("openNextButton").disabled = false;
+  window.open(openNewLinkArr[counter], "_blank");
+  counter++;
 }
 
 async function nsIterator(main, puppets, mode) {
@@ -126,7 +102,12 @@ async function nsIterator(main, puppets, mode) {
 async function gotIssues(main, puppets, password, format) {
   let userAgent = `${main} Gotissues Written by 9003, Email NSWA9002@gmail.com,discord: 9003, NSNation 9003`;
   puppets = puppets.split("\n");
-  const parser = new DOMParser();
+  let issuesCount = 0;
+  let packsCount = 0;
+  let issuesContent = ""
+  let packContent = ""
+  openNewLinkArr = []
+  const interimPacks = []
   for (let i = 0; i < puppets.length; i++) {
     let nation = puppets[i];
     if (format) {
@@ -160,56 +141,41 @@ async function gotIssues(main, puppets, password, format) {
       const xmlDocument = parser.parseFromString(xml, "text/xml");
       const issueIds = xmlDocument.querySelectorAll("ISSUE");
       const packs = xmlDocument.querySelector("PACKS");
-      const nationObj = {
-        nation: nation_formatted,
-        issues: [],
-        packs: packs ? parseInt(packs.textContent) : 0,
-      };
       issueIds.forEach((issue) => {
-        nationObj.issues.push(issue.getAttribute("id"));
+        openNewLinkArr.push(`https://www.nationstates.net/container=${
+          nation_formatted
+        }/nation=${nation_formatted}/page=show_dilemma/dilemma=${
+          issue.getAttribute('id')
+        }/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/`)
+        issuesContent += `<tr><td><p>${issuesCount+1}</p></td><td><p><a target="_blank" href="https://www.nationstates.net/container=${
+        nation_formatted
+      }/nation=${nation_formatted}/page=show_dilemma/dilemma=${
+        issue.getAttribute('id')
+      }/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/">Link to Issue</a></p></td></tr>`
+        issuesCount++
       });
-      issueIdsList.push(nationObj);
+      if (packs) {
+        for (let i = 0; i < parseInt(packs.textContent); i++) {
+          interimPacks.push(`https://www.nationstates.net/page=deck/nation=${
+            nation_formatted
+          }/container=${
+            nation_formatted
+          }/?open_loot_box=1/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1`)
+          packContent += `<tr><td><p>${packsCount+1}</p></td><td><p><a target="_blank" href="https://www.nationstates.net/page=deck/nation=${
+            nation_formatted
+          }/container=${
+            nation_formatted
+          }/?open_loot_box=1/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1">Link to Pack</a></p></td></tr>`
+          packsCount++
+        }
+      }
     } catch (err) {
       progress.textContent = `Error processing ${nation} with ${err}`;
     }
   }
-  const totalcount = issueIdsList.reduce(
-    (count, puppet) => count + puppet.issues.length,
-    0
-  );
-  const packcount = issueIdsList.reduce(
-    (count, puppet) => count + puppet.packs,
-    0
-  );
-  let issueCount = 0;
-  let packCount = 0;
-  let issueContent = "";
-  let packContent = "";
-  for (let i = 0; i < issueIdsList.length; i++) {
-    const puppet = issueIdsList[i];
-    for (let j = 0; j < puppet.issues.length; j++) {
-      issueContent += `<tr><td><p>${
-        issueCount + 1
-      } of ${totalcount}</p></td><td><p><a target="_blank" href="https://www.nationstates.net/container=${
-        puppet.nation
-      }/nation=${puppet.nation}/page=show_dilemma/dilemma=${
-        puppet.issues[j]
-      }/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/">Link to Issue</a></p></td></tr>`;
-      issueCount++;
-    }
-    for (let j = 0; j < puppet.packs; j++) {
-      packContent += `<tr><td><p>${
-        packCount + 1
-      } of ${packcount}</p></td><td><p><a target="_blank" href="https://www.nationstates.net/page=deck/nation=${
-        puppet.nation
-      }/container=${
-        puppet.nation
-      }/?open_loot_box=1/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1">Link to Pack</a></p></td></tr>`;
-      packCount++;
-    }
-  }
-  issueContent += packContent;
-  generatedContent = htmlContent(issueContent);
+  openNewLinkArr = [...openNewLinkArr, ...interimPacks]
+  issuesContent = issuesContent += packContent
+  generatedContent = htmlContent(issuesContent);
   const progress = document.createElement("p");
   progress.textContent = `Finished processing`;
   progressParagraph.prepend(progress);
@@ -287,7 +253,7 @@ const htmlContent = (content) => {
 async function junkDaJunk(main, puppets) {
   let junkHtml = "";
   puppets = puppets.split("\n");
-  const parser = new DOMParser();
+  openNewLinkArr = []
   for (let i = 0; i < puppets.length; i++) {
     let nation = puppets[i].toLowerCase().replaceAll(" ", "_");
     if (nation.includes(",")) {
@@ -375,7 +341,7 @@ async function junkDaJunk(main, puppets) {
           } -> Junking S${season} ${id} with mv ${marketValue} and highest bid ${highestBid}, rarity ${category}`;
           progress.style.color = "red";
           progressParagraph.prepend(progress);
-          tempJunkAlongside.push(
+          openNewLinkArr.push(
             `https://www.nationstates.net/container=${nation}/nation=${nation}/page=ajax3/a=junkcard/card=${id}/season=${season}/User_agent=${main}Script=JunkDaJunk/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1`
           );
           junkHtml += `<tr><td><p>${i + 1} of ${
@@ -388,7 +354,7 @@ async function junkDaJunk(main, puppets) {
           } -> Gifting ${id} with mv ${marketValue} and highest bid ${highestBid}, rarity ${category}`;
           progress.style.color = "green";
           progressParagraph.prepend(progress);
-          tempJunkAlongside.push(
+          openNewLinkArr.push(
             `https://www.nationstates.net/page=deck/container=${nation}/nation=${nation}/card=${id}/season=${season}/gift=1/User_agent=${main}Script=JunkDaJunk/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1`
           );
           junkHtml += `<tr><td><p>${i + 1} of ${
