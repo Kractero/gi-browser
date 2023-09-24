@@ -87,9 +87,7 @@ async function nsIterator(main, puppets, mode) {
       containerise_container += `@^.*\\.nationstates\\.net/(.*/)?container=${nation_formatted}(/.*)?$ , ${nation}\n`;
     }
     if (mode === "Login Sheet") {
-      buildString += `<tr><td><p>${i + 1} of ${
-        puppets.length
-      }</p></td><td><p><a target="_blank" href="https://www.nationstates.net/nation=${nation_formatted}/page=upload_flag/test=1/User_agent=${main}">Link to Nation</a></p></td></tr>`;
+      buildString += `<tr><td><p>${i + 1} of ${puppets.length}</p></td><td><p><a target="_blank" href="https://www.nationstates.net/nation=${nation_formatted}/page=upload_flag/test=1/User_agent=${main}">Link to Nation</a></p></td></tr>`;
     }
   }
   if (mode === "Login Sheet") generatedContent = htmlContent(buildString);
@@ -142,30 +140,14 @@ async function gotIssues(main, puppets, password, format) {
       const issueIds = xmlDocument.querySelectorAll("ISSUE");
       const packs = xmlDocument.querySelector("PACKS");
       issueIds.forEach((issue) => {
-        openNewLinkArr.push(`https://www.nationstates.net/container=${
-          nation_formatted
-        }/nation=${nation_formatted}/page=show_dilemma/dilemma=${
-          issue.getAttribute('id')
-        }/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/`)
-        issuesContent += `<tr><td><p>${issuesCount+1}</p></td><td><p><a target="_blank" href="https://www.nationstates.net/container=${
-        nation_formatted
-      }/nation=${nation_formatted}/page=show_dilemma/dilemma=${
-        issue.getAttribute('id')
-      }/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/">Link to Issue</a></p></td></tr>`
+        openNewLinkArr.push(`https://www.nationstates.net/container=${nation_formatted}/nation=${nation_formatted}/page=show_dilemma/dilemma=${issue.getAttribute('id')}/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/`)
+        issuesContent += `<tr><td><p>${issuesCount+1}</p></td><td><p><a target="_blank" href="https://www.nationstates.net/container=${nation_formatted}/nation=${nation_formatted}/page=show_dilemma/dilemma=${issue.getAttribute('id')}/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/">Link to Issue</a></p></td></tr>`
         issuesCount++
       });
       if (packs) {
         for (let i = 0; i < parseInt(packs.textContent); i++) {
-          interimPacks.push(`https://www.nationstates.net/page=deck/nation=${
-            nation_formatted
-          }/container=${
-            nation_formatted
-          }/?open_loot_box=1/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1`)
-          packContent += `<tr><td><p>${packsCount+1}</p></td><td><p><a target="_blank" href="https://www.nationstates.net/page=deck/nation=${
-            nation_formatted
-          }/container=${
-            nation_formatted
-          }/?open_loot_box=1/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1">Link to Pack</a></p></td></tr>`
+          interimPacks.push(`https://www.nationstates.net/page=deck/nation=${nation_formatted}/container=${nation_formatted}/?open_loot_box=1/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1`)
+          packContent += `<tr><td><p>${packsCount+1}</p></td><td><p><a target="_blank" href="https://www.nationstates.net/page=deck/nation=${nation_formatted}/container=${nation_formatted}/?open_loot_box=1/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1">Link to Pack</a></p></td></tr>`
           packsCount++
         }
       }
@@ -344,9 +326,7 @@ async function junkDaJunk(main, puppets) {
           openNewLinkArr.push(
             `https://www.nationstates.net/container=${nation}/nation=${nation}/page=ajax3/a=junkcard/card=${id}/season=${season}/User_agent=${main}Script=JunkDaJunk/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1`
           );
-          junkHtml += `<tr><td><p>${i + 1} of ${
-            cards.length
-          }</p></td><td><p><a target="_blank" href="https://www.nationstates.net/container=${nation}/nation=${nation}/page=ajax3/a=junkcard/card=${id}/season=${season}/User_agent=${main}Script=JunkDaJunk/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1\n">Link to Card</a></p></td></tr>`;
+          junkHtml += `<tr><td><p>${i + 1} of ${cards.length}</p></td><td><p><a target="_blank" href="https://www.nationstates.net/container=${nation}/nation=${nation}/page=ajax3/a=junkcard/card=${id}/season=${season}/User_agent=${main}Script=JunkDaJunk/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1\n">Link to Card</a></p></td></tr>`;
         } else {
           const progress = document.createElement("p");
           progress.textContent = `${i + 1}/${
@@ -357,9 +337,7 @@ async function junkDaJunk(main, puppets) {
           openNewLinkArr.push(
             `https://www.nationstates.net/page=deck/container=${nation}/nation=${nation}/card=${id}/season=${season}/gift=1/User_agent=${main}Script=JunkDaJunk/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1`
           );
-          junkHtml += `<tr><td><p>${i + 1} of ${
-            cards.length
-          }</p></td><td><p><a target="_blank" href="https://www.nationstates.net/page=deck/container=${nation}/nation=${nation}/card=${id}/season=${season}/gift=1/User_agent=${main}Script=JunkDaJunk/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1\n">Link to Card</a></p></td></tr>`;
+          junkHtml += `<tr><td><p>${i + 1} of ${cards.length}</p></td><td><p><a target="_blank" href="https://www.nationstates.net/page=deck/container=${nation}/nation=${nation}/card=${id}/season=${season}/gift=1/User_agent=${main}Script=JunkDaJunk/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1\n">Link to Card</a></p></td></tr>`;
         }
       }
     } catch (err) {
